@@ -1,92 +1,139 @@
+"""
+reader.py — PDF I/O and Lifecycle Layer
+
+Responsibility:
+    Validate a file path, confirm it points to a readable PDF,
+    open it with PyMuPDF, and return a structured object containing
+    the open document handle and key document properties.
+
+This module intentionally does nothing beyond opening and inspecting
+the document. Text extraction, normalisation, and metadata parsing
+are handled by separate modules in the pipeline.
+"""
+
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Union, Dict, Any
+from typing import Optional, Union
+
 import fitz  # PyMuPDF
 
 from app.parser.validators import (
+    CorruptedPDFError,
     DocumentValidator,
-    PDFParserError,
-    InvalidPDFSignatureError,
     EncryptedPDFError,
-    CorruptedPDFError
+    PDFParserError,
 )
 
 
-class PDFReader:
-    """Manages the lifecycle of a PyMuPDF Document resource and computes document diagnostics.
-    
-    Acts as a wrapper over PyMuPDF, ensuring files are read safely and diagnostics
-    like page count, encryption status, and corruption status are exposed.
+@dataclass
+class PDFDocument:
+    """Holds the open PyMuPDF document and its key properties.
+
+    Attributes:
+        filename:        The bare filename, e.g. "john_doe_cv.pdf".
+        file_size_bytes: Size of the PDF file on disk, in bytes.
+        page_count:      Total number of pages in the document.
+        doc:             The open fitz.Document handle.
+                         The caller is responsible for closing it
+                         (or use it as a context manager via fitz).
     """
 
-    def __init__(self, file_path: Union[str, Path]):
-        self.file_path = Path(file_path)
-        self._validator = DocumentValidator()
-        
-        # Fail-fast active validation for file system access and signature
-        self._file_size = self._validator.validate_file_properties(self.file_path)
-        
-        self._diagnostics: Dict[str, Any] = {
-            "file_size_bytes": self._file_size,
-            "page_count": 0,
-            "is_encrypted": False,
-            "is_corrupted": False,
-            "is_valid_pdf": True
-        }
-        self._run_diagnostics()
+    filename: str
+    size_bytes: int
+    page_count: int
+    doc: fitz.Document
 
-    def _run_diagnostics(self) -> None:
-        """Runs a passive diagnostic check on the PDF file structure and populates statistics."""
-        # Attempt to open and inspect internal document structure
-        doc = None
-        try:
-            doc = fitz.open(self.file_path)
-            
-            # Check security encryption
-            if doc.is_encrypted:
-                self._diagnostics["is_encrypted"] = True
-                # If authentication fails with empty password, we can't extract page counts safely
-                if not doc.authenticate(""):
-                    self._diagnostics["is_corrupted"] = False  # Just encrypted, not corrupted
-                    return
-            
-            # Validate page metrics
-            self._diagnostics["page_count"] = len(doc)
-            self._validator.validate_document_structure(doc)
+    # TODO: Add context manager support (__enter__ / __exit__) so callers can use
+    #   `with read_pdf(...) as pdf: ...` and have doc.close() called automatically.
 
-        except EncryptedPDFError:
-            self._diagnostics["is_encrypted"] = True
-        except (CorruptedPDFError, fitz.FileDataError, Exception):
-            self._diagnostics["is_corrupted"] = True
-        finally:
-            if doc is not None:
-                doc.close()
 
-    @property
-    def diagnostics(self) -> Dict[str, Any]:
-        """Returns the dictionary of document diagnostics (size, encryption, corruption, validity)."""
-        return self._diagnostics.copy()
+def read_pdf(
+    file_path: Union[str, Path],
+    max_bytes: Optional[int] = None,
+    max_pages: Optional[int] = None,
+) -> PDFDocument:
+    """Validate, open, and return a PDF document as a PDFDocument object.
 
-    def open_document(self) -> fitz.Document:
-        """Opens and returns the PyMuPDF Document object for active processing.
-        
-        Performs full strict validation prior to returning the document handler.
-        
-        Raises:
-            PDFParserError: If validation fails.
-        """
-        # 1. Run strict file properties validation
-        self._validator.validate_file_properties(self.file_path)
+    This is the single public entry point for this module.
+    Call it with a file path; get back a ready-to-use PDFDocument.
 
-        # 2. Open document and validate structural integrity
-        try:
-            doc = fitz.open(self.file_path)
-        except Exception as e:
-            raise CorruptedPDFError(f"Failed to open PDF document: {e}") from e
+    Args:
+        file_path:  Path to the PDF file (string or Path object).
+        max_bytes:  Optional upper limit on file size in bytes.
+                    Pass None (default) to skip the size check.
+        max_pages:  Optional upper limit on page count.
+                    Pass None (default) to skip the page check.
 
-        try:
-            self._validator.validate_document_structure(doc)
-        except Exception:
-            doc.close()
-            raise
+    Returns:
+        A PDFDocument containing the open document handle and its properties.
 
-        return doc
+    Raises:
+        PDFNotFoundError:         File does not exist at the given path.
+        EmptyPDFError:            File exists but has 0 bytes.
+        InvalidPDFSignatureError: File does not start with the %PDF header.
+        MaxFileSizeExceededError: File size exceeds max_bytes.
+        EncryptedPDFError:        PDF is password-protected.
+        CorruptedPDFError:        PyMuPDF cannot read the document structure.
+        MaxPageLimitExceededError: Page count exceeds max_pages.
+
+    Example:
+        pdf = read_pdf("resumes/john_doe.pdf", max_pages=10)
+        print(pdf.page_count)  # e.g. 2
+        pdf.doc.close()
+    """
+    path = Path(file_path)
+
+    # Step 1: Validate file-system level properties (existence, size, %PDF header).
+    validator = DocumentValidator(max_bytes=max_bytes, max_pages=max_pages)
+    file_size = validator.validate_file_properties(path)
+
+    # Step 2: Open the document with PyMuPDF.
+    doc = _open_document(path)
+
+    # Step 3: Validate internal document structure (encryption, corruption, page count).
+    try:
+        validator.validate_document_structure(doc)
+    except Exception:
+        doc.close()  # Always release the C handle on failure.
+        raise
+
+    # Step 4: Assemble and return the result.
+    return PDFDocument(
+        filename=path.name,
+        size_bytes=file_size,
+        page_count=doc.page_count,
+        doc=doc,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Private helpers
+# ---------------------------------------------------------------------------
+
+
+def _open_document(path: Path) -> fitz.Document:
+    """Open a file with PyMuPDF and return the Document handle.
+
+    Wraps PyMuPDF's own exception in a CorruptedPDFError so the rest
+    of the pipeline only ever has to deal with our own exception hierarchy.
+
+    Args:
+        path: A validated Path object pointing to an existing file.
+
+    Returns:
+        An open fitz.Document.
+
+    Raises:
+        CorruptedPDFError: If PyMuPDF fails to open the file.
+    """
+    try:
+        return fitz.open(path)
+    except fitz.FileDataError as exc:
+        raise CorruptedPDFError(
+            f"PyMuPDF could not open '{path.name}'. "
+            "The file may be corrupted."
+        ) from exc
+    except Exception as exc:
+        raise CorruptedPDFError(
+            f"Unexpected error while opening '{path.name}': {exc}"
+        ) from exc
