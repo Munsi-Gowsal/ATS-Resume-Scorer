@@ -115,7 +115,7 @@ export default function SettingsPage() {
           {/* Tab Content Sections */}
           <div className="animate-in fade-in duration-200">
             {activeTab === "profile" && (
-              <ProfileSection onSave={(data) => showToast("Profile information updated successfully!")} />
+              <ProfileSection onSave={() => showToast("Profile information updated successfully!")} />
             )}
             {activeTab === "apikeys" && <ApiKeysSection />}
             {activeTab === "ats" && <AtsPreferencesSection />}

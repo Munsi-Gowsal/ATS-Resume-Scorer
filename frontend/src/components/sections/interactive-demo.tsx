@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, FileText, CheckCircle2, AlertTriangle, ArrowRight } from "lucide-react";
+import { FileText, CheckCircle2, AlertTriangle, ArrowRight } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -94,7 +94,7 @@ export function InteractiveDemo() {
               <div className="p-4 bg-slate-950/60 rounded-xl text-xs font-mono text-slate-300 leading-relaxed border border-white/5 space-y-2">
                 <p><strong>Target Role:</strong> {active.title}</p>
                 <p><strong>Target Employer:</strong> {active.company}</p>
-                <p className="text-slate-400 pt-2 border-t border-white/10">"Experienced software engineer specializing in scalable distributed web platforms..."</p>
+                <p className="text-slate-400 pt-2 border-t border-white/10">&quot;Experienced software engineer specializing in scalable distributed web platforms...&quot;</p>
               </div>
               <Button variant="outline" size="sm" className="w-full">
                 <span>Upload Custom Resume</span>
@@ -114,8 +114,8 @@ export function InteractiveDemo() {
               <Badge variant={active.score > 90 ? "emerald" : "amber"}>
                 {active.score > 90 ? "Strong Fit" : "Moderate Gap Identified"}
               </Badge>
-              <p className="text-xs text-slate-400 mt-4 leading-normal px-2">
-                {active.suggestion}
+              <p className="text-slate-300 font-semibold mb-1 sm:mb-0">
+                Target Role: &quot;Senior Cloud Infrastructure Architect&quot;
               </p>
             </motion.div>
 

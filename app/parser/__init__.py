@@ -1,6 +1,6 @@
 from app.parser.models import ParsedDocument, ResumeBlock, DocumentMetadata
 from app.parser.parser import ResumeParser
-from app.parser.reader import PDFReader
+from app.parser.reader import read_pdf, PDFDocument
 from app.parser.extractor import TextExtractor
 from app.parser.normalizer import DocumentNormalizer
 from app.parser.validators import (
@@ -20,7 +20,8 @@ __all__ = [
     "ParsedDocument",
     "ResumeBlock",
     "DocumentMetadata",
-    "PDFReader",
+    "read_pdf",
+    "PDFDocument",
     "TextExtractor",
     "DocumentNormalizer",
     "DocumentValidator",

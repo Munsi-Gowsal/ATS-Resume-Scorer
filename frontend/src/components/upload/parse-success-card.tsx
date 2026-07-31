@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, ArrowRight, Award, Zap, FileText } from "lucide-react";
+import { CheckCircle2, ArrowRight } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +31,7 @@ export function ParseSuccessCard({
 
       <h3 className="text-2xl font-bold text-white mb-2">Resume Intelligence Generated</h3>
       <p className="text-xs text-slate-300 mb-6 max-w-md mx-auto leading-relaxed">
-        Extracted hard skills, experience credentials, and computed ATS match score for{" "}
+        Extracted hard skills from <span className="text-purple-300 font-mono">{filename}</span> and computed ATS match score for{" "}
         <strong className="text-white">{targetRole}</strong>.
       </p>
 

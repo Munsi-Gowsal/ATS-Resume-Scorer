@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Sparkles, ArrowLeft, Send, CheckCircle2 } from "lucide-react";
+import { Sparkles, ArrowLeft, Send } from "lucide-react";
 import Link from "next/link";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
@@ -34,11 +34,7 @@ export default function UploadPage() {
     },
   });
 
-  const selectedFile = watch("resumeFile");
-  const targetRole = watch("targetRole");
-  const jobDescription = watch("jobDescription");
-
-  const onSubmit = (data: UploadFormData) => {
+  const onSubmit = () => {
     setGlobalError(null);
     setStage("parsing");
   };
@@ -108,9 +104,9 @@ export default function UploadPage() {
               Step 2: Define Target Role & Job Posting
             </h2>
             <JobSpecInput
-              targetRole={targetRole || ""}
+              targetRole={watch("targetRole") || ""}
               onTargetRoleChange={(val) => setValue("targetRole", val, { shouldValidate: true })}
-              jobDescription={jobDescription || ""}
+              jobDescription={watch("jobDescription") || ""}
               onJobDescriptionChange={(val) => setValue("jobDescription", val, { shouldValidate: true })}
               targetRoleError={errors.targetRole?.message}
               jobDescriptionError={errors.jobDescription?.message}
@@ -135,8 +131,8 @@ export default function UploadPage() {
       {/* Stage: Parsing Success */}
       {stage === "success" && (
         <ParseSuccessCard
-          filename={selectedFile?.name || "Candidate_Resume.pdf"}
-          targetRole={targetRole || "Senior Backend Engineer"}
+          filename={watch("resumeFile")?.name || "Candidate_Resume.pdf"}
+          targetRole={watch("targetRole") || "Senior Backend Engineer"}
           onReset={handleResetForm}
           onViewDashboard={() => (window.location.href = "/dashboard")}
         />

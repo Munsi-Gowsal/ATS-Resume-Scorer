@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Sparkles, AlertCircle, CheckCircle2, TrendingUp } from "lucide-react";
+import { Sparkles, AlertCircle } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 
@@ -75,7 +75,7 @@ export function ScoreHeroCard({
           </div>
 
           <h2 className="text-xl sm:text-2xl font-extrabold text-white leading-snug">
-            "{verdict}"
+            &quot;{verdict}&quot;
           </h2>
 
           {/* High Priority Advice Banner */}

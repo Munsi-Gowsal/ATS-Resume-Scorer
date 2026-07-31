@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, FileCode, AlertCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { FileCode, AlertCircle } from "lucide-react";
 
 interface JobSpecInputProps {
   targetRole: string;

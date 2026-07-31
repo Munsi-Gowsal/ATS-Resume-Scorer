@@ -43,7 +43,9 @@ export function ApiKeysSection() {
           </div>
           <div>
             <h3 className="text-lg font-bold text-white">API Keys & LLM Integrations</h3>
-            <p className="text-xs text-slate-400">Configure your custom OpenAI API keys for resume parsing models.</p>
+            <p className="text-xs text-slate-400 mt-2">
+              Never share your API keys in client-side code or public repositories. Keys begin with &quot;sk_live_&quot; or &quot;sk_test_&quot;.
+            </p>
           </div>
         </div>
 
@@ -102,7 +104,7 @@ export function ApiKeysSection() {
 
         {apiKeys.length === 0 && (
           <div className="p-8 text-center border border-dashed border-white/15 rounded-xl text-slate-400 text-xs">
-            No active API keys found. Click "Generate New Key" to connect your LLM backend.
+            No active API keys found. Click &quot;Generate New Key&quot; to connect your LLM backend.
           </div>
         )}
       </div>

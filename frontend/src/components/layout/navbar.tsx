@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Menu, X, ArrowRight, ShieldCheck } from "lucide-react";
+import { Sparkles, Menu, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {

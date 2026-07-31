@@ -19,6 +19,11 @@ class EmptyPDFError(PDFParserError):
     pass
 
 
+class NotAFileError(PDFParserError):
+    """Raised when the path exists but does not point to a regular file."""
+    pass
+
+
 class InvalidPDFSignatureError(PDFParserError):
     """Raised when the file does not begin with the %PDF magic header."""
     pass
@@ -79,7 +84,7 @@ class DocumentValidator:
             raise PDFNotFoundError(f"File not found at: {path}")
 
         if not path.is_file():
-            raise PDFParserError(f"Path is not a regular file: {path}")
+            raise NotAFileError(f"Path is not a regular file: {path}")
 
         file_size = os.path.getsize(path)
 

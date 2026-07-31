@@ -20,9 +20,17 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run build && npm run start',
+    // In CI the build is pre-downloaded as an artifact; run the standalone
+    // server directly. Locally, use the dev server for fast iteration.
+    command: process.env.CI
+      ? 'node .next/standalone/server.js'
+      : 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
+    env: {
+      PORT: '3000',
+      HOSTNAME: '0.0.0.0',
+    },
   },
 });

@@ -32,6 +32,10 @@ class ApiClient {
         const requestId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
         config._requestId = requestId;
 
+        // Tracing headers
+        config.headers.set('X-Request-ID', requestId);
+        config.headers.set('X-Correlation-ID', requestId);
+
         if (!config.signal) {
           const controller = new AbortController();
           this.abortControllers.set(requestId, controller);

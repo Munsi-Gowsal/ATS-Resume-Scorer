@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FileUp, Sparkles, Plus } from "lucide-react";
+import { FileUp, Plus } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 

@@ -49,6 +49,25 @@ export function AtsPreferencesSection() {
           </select>
         </div>
 
+        {/* Strictness Level Slider */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label htmlFor="strictness-slider" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              ATS Parser Strictness Level ({strictness})
+            </label>
+            <span className="text-xs font-mono text-purple-300">Level {strictness} / 5</span>
+          </div>
+          <input
+            id="strictness-slider"
+            type="range"
+            min={1}
+            max={5}
+            value={strictness}
+            onChange={(e) => setStrictness(Number(e.target.value))}
+            className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-purple-500"
+          />
+        </div>
+
         {/* Minimum Score Threshold Slider */}
         <div>
           <div className="flex items-center justify-between mb-2">
@@ -78,7 +97,7 @@ export function AtsPreferencesSection() {
           <div>
             <span className="text-xs font-semibold text-white block">Enable Fuzzy Synonym Skill Matching</span>
             <p className="text-[11px] text-slate-400">
-              Automatically match equivalent skill terms (e.g., treating "React.js" and "React" as 100% matched).
+              Automatically match equivalent skill terms (e.g., treating &quot;React.js&quot; and &quot;React&quot; as 100% matched).
             </p>
           </div>
           <button

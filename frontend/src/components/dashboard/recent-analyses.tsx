@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ExternalLink, MoreHorizontal, FileCheck, FileWarning, FileX } from "lucide-react";
+import { ExternalLink, FileCheck, FileWarning, FileX } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { RecentScanItem } from "@/types/dashboard";

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Union, Optional
 
-from app.parser.reader import PDFReader
+from app.parser.reader import read_pdf, PDFDocument
 from app.parser.extractor import TextExtractor
 from app.parser.metadata import MetadataExtractor
 from app.parser.normalizer import DocumentNormalizer
@@ -42,15 +42,9 @@ class ResumeParser:
             MaxFileSizeExceededError: If size exceeds max_bytes.
             MaxPageLimitExceededError: If page count exceeds max_pages.
         """
-        # 1. Instantiate reader (implicitly runs basic structural diagnostic checks)
-        reader = PDFReader(file_path)
-
-        # 2. Open PDF document under strict validations
-        # Set constraints on the reader's validator dynamically before opening
-        reader._validator.max_bytes = max_bytes
-        reader._validator.max_pages = max_pages
-
-        doc = reader.open_document()
+        # 1. Open PDF with validation (replaces the old PDFReader class)
+        pdf_doc = read_pdf(file_path, max_bytes=max_bytes, max_pages=max_pages)
+        doc = pdf_doc.doc
         try:
             # 3. Extract document-level metadata
             metadata = MetadataExtractor.extract(doc)

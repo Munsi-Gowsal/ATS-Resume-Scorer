@@ -1,0 +1,42 @@
+# ---- Version Control ----
+.git
+.gitignore
+
+# ---- Development configs ----
+.env
+.env.*
+!.env.example
+
+# ---- Node modules ----
+node_modules
+
+# ---- Next.js dev/test artifacts ----
+.next
+out
+build
+
+# ---- Test artifacts ----
+coverage
+playwright-report
+test-results
+e2e
+
+# ---- Editor & OS ----
+.DS_Store
+*.pem
+.vscode
+.idea
+*.swp
+*.swo
+
+# ---- TypeScript build info ----
+*.tsbuildinfo
+
+# ---- Documentation ----
+README.md
+DEPLOYMENT.md
+CLAUDE.md
+AGENTS.md
+
+# ---- CI ----
+.github
