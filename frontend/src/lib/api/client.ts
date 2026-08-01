@@ -1,5 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { setupAuthInterceptors } from '../auth/interceptors';
+// Authentication interceptors are temporarily disabled until the backend
+// implements /api/v1/auth/login and /api/v1/auth/refresh endpoints.
+// import { setupAuthInterceptors } from '../auth/interceptors';
 import type { ApiError } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
@@ -22,8 +24,9 @@ class ApiClient {
     });
 
     this.setupInterceptors();
-    // Register Phase 9 auth interceptors onto underlying Axios instance
-    setupAuthInterceptors(this.client);
+
+    // Authentication is temporarily disabled until backend auth is implemented.
+    // setupAuthInterceptors(this.client);
   }
 
   private setupInterceptors(): void {

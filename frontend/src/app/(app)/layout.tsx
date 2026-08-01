@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { RequireAuth } from '@/components/auth/require-auth';
 
 /**
  * Protected App Layout
  *
- * Wraps all protected routes under the (app) route group inside <RequireAuth>.
+ * RequireAuth temporarily disabled — backend auth not yet available.
+ * Re-enable by wrapping {children} in <RequireAuth> once the backend
+ * supports /auth/login and /auth/refresh endpoints.
  */
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <RequireAuth>{children}</RequireAuth>;
+  return <>{children}</>;
 }
