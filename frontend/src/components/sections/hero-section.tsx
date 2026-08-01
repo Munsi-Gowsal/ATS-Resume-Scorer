@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Sparkles, ArrowRight, Shield, CheckCircle, Zap, FileSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -58,14 +59,18 @@ export function HeroSection() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-xl shadow-purple-500/25">
-            <span>Scan Resume Free</span>
-            <ArrowRight className="w-5 h-5 ml-1" />
-          </Button>
-          <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-            <FileSearch className="w-5 h-5 mr-2 text-cyan-400" />
-            <span>View Interactive Demo</span>
-          </Button>
+          <Link href="/upload">
+            <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-xl shadow-purple-500/25">
+              <span>Scan Resume Free</span>
+              <ArrowRight className="w-5 h-5 ml-1" />
+            </Button>
+          </Link>
+          <Link href="#demo">
+            <Button variant="secondary" size="lg" className="w-full sm:w-auto">
+              <FileSearch className="w-5 h-5 mr-2 text-cyan-400" />
+              <span>View Interactive Demo</span>
+            </Button>
+          </Link>
         </motion.div>
 
         {/* Trust Badges */}
